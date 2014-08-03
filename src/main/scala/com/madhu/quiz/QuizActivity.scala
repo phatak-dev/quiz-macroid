@@ -47,7 +47,26 @@ Contexts[Activity] {
 
  override def onCreate(savedInstanceState: Bundle) = {
   var questionView = slot[TextView]
+  var prev = slot[Button]
+  var next = slot[Button]
   super.onCreate(savedInstanceState)  
+
+     val prevNextLayout = l[LinearLayout](
+       w[Button] <~ text("Prev")
+         <~ layoutParams[LinearLayout](WRAP_CONTENT,
+        WRAP_CONTENT) <~  On.click {
+          currentIndex = if(currentIndex>0) currentIndex-1 else 0
+          questionView <~ text(questions(currentIndex).question) 
+        } <~ wire(prev),
+        w[Button] <~ text("Next") <~ wire(next)
+         <~ layoutParams[LinearLayout](WRAP_CONTENT,
+        WRAP_CONTENT) <~  On.click {
+          currentIndex =  currentIndex+1
+          questionView <~ text(questions(currentIndex).question)           
+        } 
+    ) <~ layoutParams[LinearLayout](WRAP_CONTENT,
+        WRAP_CONTENT) <~ (horizontal) <~ padding(all = 10 dp)
+
      val view = l[LinearLayout](
       w[TextView] <~ wire(questionView)
       <~ text(questions(currentIndex).question)
@@ -71,12 +90,13 @@ Contexts[Activity] {
          }
       ) <~ layoutParams[LinearLayout](WRAP_CONTENT,
         WRAP_CONTENT) <~ (horizontal),
-        w[Button] <~ text("Next")
+        /*w[Button] <~ text("Next")
          <~ layoutParams[LinearLayout](WRAP_CONTENT,
         WRAP_CONTENT) <~  On.click {
           currentIndex = currentIndex+1
           questionView <~ text(questions(currentIndex).question) 
-        } 
+        } */
+        prevNextLayout
     ) <~ (vertical) <~
        Tweak[LinearLayout] { view ⇒
          view.setGravity(Gravity.CENTER)
