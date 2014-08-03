@@ -25,6 +25,7 @@ import macroid.contrib.ExtraTweaks._
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
+
 trait Helper {
   // sets text, large font size and a long click handler
   def caption(cap: String)(implicit ctx: AppContext): 
@@ -45,19 +46,23 @@ Contexts[Activity] {
    TrueFalse("catchme",true))
  var currentIndex = 0
 
+ 
  override def onCreate(savedInstanceState: Bundle) = {
   var questionView = slot[TextView]
   var prev = slot[Button]
   var next = slot[Button]
-  super.onCreate(savedInstanceState)  
-
+  super.onCreate(savedInstanceState)       
      val prevNextLayout = l[LinearLayout](
        w[Button] <~ text("Prev")
          <~ layoutParams[LinearLayout](WRAP_CONTENT,
         WRAP_CONTENT) <~  On.click {
           currentIndex = if(currentIndex>0) currentIndex-1 else 0
           questionView <~ text(questions(currentIndex).question) 
-        } <~ wire(prev),
+        } <~ wire(prev)
+        /*<~ Tweak[Button](button => {
+            button.setCompoundDrawablesWithIntrinsicBounds(0,0,0,
+              R.drawable.left-button)
+          })*/,
         w[Button] <~ text("Next") <~ wire(next)
          <~ layoutParams[LinearLayout](WRAP_CONTENT,
         WRAP_CONTENT) <~  On.click {
