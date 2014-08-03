@@ -39,23 +39,44 @@ trait Helper {
 class QuizActivity extends Activity with Helper with  
 Contexts[Activity] {
  
+ case class TrueFalse(val question:String, mTrue :
+  Boolean)
+ val questions = Vector(TrueFalse("hi",false),
+   TrueFalse("catchme",true))
+ var currentIndex = 0
+
  override def onCreate(savedInstanceState: Bundle) = {
+  var questionView = slot[TextView]
   super.onCreate(savedInstanceState)  
      val view = l[LinearLayout](
-      w[TextView] <~ text("Some question?")
+      w[TextView] <~ wire(questionView)
+      <~ text(questions(currentIndex).question)
       <~ layoutParams[LinearLayout](WRAP_CONTENT,
-        WRAP_CONTENT) <~ padding(all = 24 dp),
+        WRAP_CONTENT) <~ padding(all = 24 dp),      
       l[LinearLayout](
          w[Button] <~ text("true")
+         <~ On.click {
+          val truthful = questions(currentIndex).mTrue
+          if(truthful) caption("correct answer")
+          else caption("wrong answer")
+         }
          <~ layoutParams[LinearLayout](WRAP_CONTENT,
         WRAP_CONTENT),
          w[Button] <~ text("false")
          <~ layoutParams[LinearLayout](WRAP_CONTENT,
         WRAP_CONTENT) <~ On.click {
-          caption("clicked false")          
+          val truthful = questions(currentIndex).mTrue
+          if(!truthful) caption("correct answer")
+          else caption("wrong answer")
          }
       ) <~ layoutParams[LinearLayout](WRAP_CONTENT,
-        WRAP_CONTENT) <~ (horizontal)
+        WRAP_CONTENT) <~ (horizontal),
+        w[Button] <~ text("Next")
+         <~ layoutParams[LinearLayout](WRAP_CONTENT,
+        WRAP_CONTENT) <~  On.click {
+          currentIndex = currentIndex+1
+          questionView <~ text(questions(currentIndex).question) 
+        } 
     ) <~ (vertical) <~
        Tweak[LinearLayout] { view ⇒
          view.setGravity(Gravity.CENTER)
