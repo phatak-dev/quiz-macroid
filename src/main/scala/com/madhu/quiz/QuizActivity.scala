@@ -61,7 +61,7 @@ Contexts[Activity] {
         } <~ wire(prev)
         /*<~ Tweak[Button](button => {
             button.setCompoundDrawablesWithIntrinsicBounds(0,0,0,
-              R.drawable.left-button)
+              R.drawable.left-button.png)
           })*/,
         w[Button] <~ text("Next") <~ wire(next)
          <~ layoutParams[LinearLayout](WRAP_CONTENT,
