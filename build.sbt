@@ -4,7 +4,7 @@ android.Plugin.androidBuild
 
 platformTarget in Android := "android-19"
 
-name := "macroid-starter"
+name := "Quiz"
 
 scalaVersion := "2.11.1"
 

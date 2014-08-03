@@ -1,24 +1,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.madhu.flash"
+    package="com.madhu.quiz"
     android:versionCode="0"
     android:versionName="0.1">
 
     <uses-sdk
         android:minSdkVersion="7"
-        android:targetSdkVersion="19"/>
-         
-     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.FLASHLIGHT" />
-    <uses-feature android:name="android.hardware.camera" />
-    <uses-feature android:name="android.hardware.camera.autofocus"/>
+        android:targetSdkVersion="19"/>            
 
     <application
-        android:label="FlashLite"
+        android:label="Quiz"
         android:icon="@drawable/android:star_big_on">
 
         <activity
-          android:label="FlashLite"
-          android:name=".Flash">
+          android:label="Quiz"
+          android:name=".QuizActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
