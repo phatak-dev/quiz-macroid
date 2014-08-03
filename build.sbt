@@ -8,7 +8,12 @@ name := "Quiz"
 
 scalaVersion := "2.11.1"
 
+
+
+
 run <<= run in Android
+
+
 
 resolvers ++= Seq(
   Resolver.sonatypeRepo("releases"),
