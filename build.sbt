@@ -20,12 +20,8 @@ resolvers ++= Seq(
   "jcenter" at "http://jcenter.bintray.com"
 )
 
-scalacOptions in (Compile, compile) ++= Seq(
-  "-P:wartremover:cp:" + (dependencyClasspath in Compile).value
-    .files.map(_.toURL.toString)
-    .find(_.contains("org.macroid/macroid_")).get,
-  "-P:wartremover:traverser:macroid.warts.CheckUi"
-)
+// scalacOptions ++= Seq("-deprecation", "-feature", "-Xlint")
+
 
 libraryDependencies ++= Seq(
   "org.macroid" %% "macroid" % "2.0.0-M2",
@@ -38,5 +34,6 @@ proguardOptions in Android ++= Seq(
   "-ignorewarnings",
   "-keep class scala.Dynamic",
   "-keep class scala.concurrent.ExecutionContext",
-  "-keep class scala.Option"
+  "-keep class scala.Option",
+  "-keep class com.madhu.quiz.R"
 )

@@ -16,6 +16,7 @@ import android.graphics.Typeface;
 import android.hardware.Camera;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.util.Log.d
 
 // import macroid stuff
 import macroid._
@@ -45,13 +46,15 @@ Contexts[Activity] {
  val questions = Vector(TrueFalse("hi",false),
    TrueFalse("catchme",true))
  var currentIndex = 0
+ val tag = "QuizActivity"
 
  
  override def onCreate(savedInstanceState: Bundle) = {
   var questionView = slot[TextView]
   var prev = slot[Button]
   var next = slot[Button]
-  super.onCreate(savedInstanceState)       
+  super.onCreate(savedInstanceState) 
+  d(tag,"onCreate is called")      
      val prevNextLayout = l[LinearLayout](
        w[Button] <~ text("Prev")
          <~ layoutParams[LinearLayout](WRAP_CONTENT,
@@ -111,6 +114,11 @@ Contexts[Activity] {
       }*/
     setContentView(getUi(view))
  }
+
+  override def onDestroy() {
+    super.onDestroy()
+    d(tag,"on onDestroy called")
+  }
 
 }
  
