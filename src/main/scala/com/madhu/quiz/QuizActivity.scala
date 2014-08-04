@@ -113,7 +113,13 @@ Contexts[Activity] {
       val cheatButton = w[Button] <~ text("Cheat!") <~
         layoutParams[LinearLayout](WRAP_CONTENT,
         WRAP_CONTENT) <~ On.click {
-
+          val intent = 
+          new android.content.Intent(QuizActivity.this, classOf[
+            CheatActivity])
+          val answer = questions(currentIndex).mTrue
+          intent.putExtra(CheatActivity.EXTRA_ANSWER_IS_TRUE,
+            answer)
+          startActivity(intent)
           Ui(true)
         }
 
