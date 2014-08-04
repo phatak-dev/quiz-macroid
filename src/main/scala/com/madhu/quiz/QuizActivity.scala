@@ -18,6 +18,7 @@ import android.hardware.Camera;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.util.Log.d
+import android.content.Intent
 
 // import macroid stuff
 import macroid._
@@ -45,6 +46,8 @@ trait Helper {
         view.setLayoutParams(params)
      })
   }
+
+
 }
 
 
@@ -58,8 +61,18 @@ Contexts[Activity] {
  var currentIndex = 0
  val tag = "QuizActivity"
  val key_index = "index"
+ var mIsCheater :Boolean = _ 
 
  
+ def checkAnswer(userAnswer:Boolean) = {
+  val truthful = questions(currentIndex).mTrue
+  val text = if(mIsCheater) "you cheated"
+  else if(userAnswer == truthful)
+    "correct answer here"
+  else "wrong answer here"
+  caption(text)
+ }
+
  override def onCreate(savedInstanceState: Bundle) = {
   var questionView = slot[TextView]
   var prev = slot[Button]
@@ -92,19 +105,15 @@ Contexts[Activity] {
         WRAP_CONTENT) <~ padding(all = 24 dp)
      val answerView = l[LinearLayout](
          w[Button] <~ text("true")
-         <~ On.click {
-          val truthful = questions(currentIndex).mTrue
-          if(truthful) caption("correct answer")
-          else caption("wrong answer")
+         <~ On.click {          
+          checkAnswer(true)
          }
          <~ layoutParams[LinearLayout](WRAP_CONTENT,
         WRAP_CONTENT),
          w[Button] <~ text("false")
          <~ layoutParams[LinearLayout](WRAP_CONTENT,
-        WRAP_CONTENT) <~ On.click {
-          val truthful = questions(currentIndex).mTrue
-          if(!truthful) caption("correct answer")
-          else caption("wrong answer")
+        WRAP_CONTENT) <~ On.click {          
+          checkAnswer(false)
          }
       ) <~ layoutParams[LinearLayout](WRAP_CONTENT,
         WRAP_CONTENT) <~ (horizontal)
@@ -119,7 +128,7 @@ Contexts[Activity] {
           val answer = questions(currentIndex).mTrue
           intent.putExtra(CheatActivity.EXTRA_ANSWER_IS_TRUE,
             answer)
-          startActivity(intent)
+          startActivityForResult(intent,0)
           Ui(true)
         }
 
@@ -158,6 +167,14 @@ Contexts[Activity] {
   override def onSaveInstanceState(savedInstanceState:Bundle) = {
     d(tag,"inside savedInstanceState")
     savedInstanceState.putInt(key_index,currentIndex)
+  }
+
+  override def onActivityResult(requestCode:Int,resultCode:Int,data:Intent){
+     mIsCheater = data !=null && (requestCode match {
+      case 0 => data.getBooleanExtra(
+      CheatActivity.EXTRA_ANSWER_SHOWN,false)
+      case _ => false
+     })    
   }
 
 
