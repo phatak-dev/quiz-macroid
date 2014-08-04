@@ -93,6 +93,7 @@ Contexts[Activity] {
          <~ layoutParams[LinearLayout](WRAP_CONTENT,
         WRAP_CONTENT) <~  On.click {
           currentIndex =  (currentIndex+1) % questions.length          
+          mIsCheater = false
           questionView <~ text(questions(currentIndex).question)           
         } 
     ) <~ layoutParams[LinearLayout](WRAP_CONTENT,
