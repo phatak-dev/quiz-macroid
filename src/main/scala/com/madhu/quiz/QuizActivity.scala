@@ -3,6 +3,7 @@ package com.madhu.quiz
 import android.os.Bundle
 import android.widget.{LinearLayout, TextView, Button,FrameLayout}
 import android.view.ViewGroup.LayoutParams._
+import android.view.ViewGroup
 import android.view.{Gravity, View}
 import android.app.Activity
 import android.text.method.LinkMovementMethod;
@@ -35,7 +36,7 @@ trait Helper {
         <~ fry) ~
       Ui(true)
     }
-  def setLayoutGravity(value:Int)(implicit ctx: AppContext):
+  def setFrameLayoutGravity(value:Int)(implicit ctx: AppContext):
    Tweak[View] = {
      new Tweak((view:View) => {
        val params = new FrameLayout.LayoutParams(
@@ -115,11 +116,11 @@ Contexts[Activity] {
       }
 
     val landscapeLayout = l[FrameLayout] (
-      questionTextView <~ setLayoutGravity(Gravity.
+      questionTextView <~ setFrameLayoutGravity(Gravity.
         CENTER_HORIZONTAL),
-      answerView <~ setLayoutGravity(Gravity.CENTER_VERTICAL 
+      answerView <~ setFrameLayoutGravity(Gravity.CENTER_VERTICAL 
         | Gravity.CENTER_HORIZONTAL),
-      prevNextLayout <~ setLayoutGravity(Gravity.BOTTOM
+      prevNextLayout <~ setFrameLayoutGravity(Gravity.BOTTOM
         | Gravity.RIGHT )            
     ) <~ layoutParams[LinearLayout](MATCH_PARENT,
         MATCH_PARENT)
