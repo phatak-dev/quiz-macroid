@@ -57,6 +57,7 @@ Contexts[Activity] {
    TrueFalse("catchme",true))
  var currentIndex = 0
  val tag = "QuizActivity"
+ val key_index = "index"
 
  
  override def onCreate(savedInstanceState: Bundle) = {
@@ -64,7 +65,10 @@ Contexts[Activity] {
   var prev = slot[Button]
   var next = slot[Button]
   super.onCreate(savedInstanceState) 
-  d(tag,"onCreate is called")      
+  d(tag,"onCreate is called") 
+  currentIndex = if(savedInstanceState!=null)
+     savedInstanceState.getInt(key_index) else currentIndex
+
      val prevNextLayout = l[LinearLayout](
        w[Button] <~ text("Prev")
          <~ layoutParams[LinearLayout](WRAP_CONTENT,
@@ -75,7 +79,7 @@ Contexts[Activity] {
         w[Button] <~ text("Next") <~ wire(next)
          <~ layoutParams[LinearLayout](WRAP_CONTENT,
         WRAP_CONTENT) <~  On.click {
-          currentIndex =  currentIndex+1
+          currentIndex =  (currentIndex+1) % questions.length          
           questionView <~ text(questions(currentIndex).question)           
         } 
     ) <~ layoutParams[LinearLayout](WRAP_CONTENT,
@@ -134,6 +138,12 @@ Contexts[Activity] {
     super.onDestroy()
     d(tag,"on onDestroy called")
   }
+
+  override def onSaveInstanceState(savedInstanceState:Bundle) = {
+    d(tag,"inside savedInstanceState")
+    savedInstanceState.putInt(key_index,currentIndex)
+  }
+
 
 }
  
