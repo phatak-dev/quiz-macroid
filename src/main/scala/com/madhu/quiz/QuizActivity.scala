@@ -1,7 +1,7 @@
 package com.madhu.quiz
 
 import android.os.Bundle
-import android.widget.{LinearLayout, TextView, Button}
+import android.widget.{LinearLayout, TextView, Button,FrameLayout}
 import android.view.ViewGroup.LayoutParams._
 import android.view.{Gravity, View}
 import android.app.Activity
@@ -35,6 +35,15 @@ trait Helper {
         <~ fry) ~
       Ui(true)
     }
+  def setLayoutGravity(value:Int)(implicit ctx: AppContext):
+   Tweak[View] = {
+     new Tweak((view:View) => {
+       val params = new FrameLayout.LayoutParams(
+                WRAP_CONTENT, WRAP_CONTENT)        
+        params.gravity=value
+        view.setLayoutParams(params)
+     })
+  }
 }
 
 
@@ -61,11 +70,7 @@ Contexts[Activity] {
         WRAP_CONTENT) <~  On.click {
           currentIndex = if(currentIndex>0) currentIndex-1 else 0
           questionView <~ text(questions(currentIndex).question) 
-        } <~ wire(prev)
-        /*<~ Tweak[Button](button => {
-            button.setCompoundDrawablesWithIntrinsicBounds(0,0,0,
-              R.drawable.left-button.png)
-          })*/,
+        } <~ wire(prev),        
         w[Button] <~ text("Next") <~ wire(next)
          <~ layoutParams[LinearLayout](WRAP_CONTENT,
         WRAP_CONTENT) <~  On.click {
@@ -75,12 +80,12 @@ Contexts[Activity] {
     ) <~ layoutParams[LinearLayout](WRAP_CONTENT,
         WRAP_CONTENT) <~ (horizontal) <~ padding(all = 10 dp)
 
-     val view = l[LinearLayout](
-      w[TextView] <~ wire(questionView)
-      <~ text(questions(currentIndex).question)
-      <~ layoutParams[LinearLayout](WRAP_CONTENT,
-        WRAP_CONTENT) <~ padding(all = 24 dp),      
-      l[LinearLayout](
+
+     val questionTextView = w[TextView] <~ wire(questionView) <~ 
+      text(questions(currentIndex).question) <~
+       layoutParams[LinearLayout](WRAP_CONTENT,
+        WRAP_CONTENT) <~ padding(all = 24 dp)
+     val answerView = l[LinearLayout](
          w[Button] <~ text("true")
          <~ On.click {
           val truthful = questions(currentIndex).mTrue
@@ -97,22 +102,31 @@ Contexts[Activity] {
           else caption("wrong answer")
          }
       ) <~ layoutParams[LinearLayout](WRAP_CONTENT,
-        WRAP_CONTENT) <~ (horizontal),
-        /*w[Button] <~ text("Next")
-         <~ layoutParams[LinearLayout](WRAP_CONTENT,
-        WRAP_CONTENT) <~  On.click {
-          currentIndex = currentIndex+1
-          questionView <~ text(questions(currentIndex).question) 
-        } */
-        prevNextLayout
+        WRAP_CONTENT) <~ (horizontal)
+        
+
+     val portraitLayout = l[LinearLayout](
+      questionTextView,  
+      answerView,
+      prevNextLayout             
     ) <~ (vertical) <~
        Tweak[LinearLayout] { view ⇒
          view.setGravity(Gravity.CENTER)
-      }/* <~ Transformer {
-        // here we set a padding of 4 dp for all inner views
-        case x: View ⇒ x <~ padding(all = 4 dp)
-      }*/
-    setContentView(getUi(view))
+      }
+
+    val landscapeLayout = l[FrameLayout] (
+      questionTextView <~ setLayoutGravity(Gravity.
+        CENTER_HORIZONTAL),
+      answerView <~ setLayoutGravity(Gravity.CENTER_VERTICAL 
+        | Gravity.CENTER_HORIZONTAL),
+      prevNextLayout <~ setLayoutGravity(Gravity.BOTTOM
+        | Gravity.RIGHT )            
+    ) <~ layoutParams[LinearLayout](MATCH_PARENT,
+        MATCH_PARENT)
+
+    val layout = if(portrait) portraitLayout else landscapeLayout
+
+    setContentView(getUi(layout))
  }
 
   override def onDestroy() {
