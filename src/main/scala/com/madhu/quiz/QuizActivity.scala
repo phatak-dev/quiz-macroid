@@ -56,8 +56,10 @@ Contexts[Activity] {
  
  case class TrueFalse(val question:String, mTrue :
   Boolean)
- val questions = Vector(TrueFalse("hi",false),
-   TrueFalse("catchme",true))
+ val questions = Vector(TrueFalse("The pacific ocean"+
+  "is larger than Atlantic ocean",true),
+   TrueFalse("Nerds rule the world",true),
+   TrueFalse("In Scala None==None return true",false))
  var currentIndex = 0
  val tag = "QuizActivity"
  val key_index = "index"
@@ -68,8 +70,8 @@ Contexts[Activity] {
   val truthful = questions(currentIndex).mTrue
   val text = if(mIsCheater) "you cheated"
   else if(userAnswer == truthful)
-    "correct answer here"
-  else "wrong answer here"
+    "correct answer"
+  else "wrong answer"
   caption(text)
  }
 
@@ -82,11 +84,17 @@ Contexts[Activity] {
   currentIndex = if(savedInstanceState!=null)
      savedInstanceState.getInt(key_index) else currentIndex
 
+
+   val actionBar = getActionBar();
+   actionBar.setSubtitle("Bodies of Water")
+
+
      val prevNextLayout = l[LinearLayout](
        w[Button] <~ text("Prev")
          <~ layoutParams[LinearLayout](WRAP_CONTENT,
         WRAP_CONTENT) <~  On.click {
-          currentIndex = if(currentIndex>0) currentIndex-1 else 0
+          currentIndex = if(currentIndex>0) currentIndex-1 else 
+          questions.length - 1
           questionView <~ text(questions(currentIndex).question) 
         } <~ wire(prev),        
         w[Button] <~ text("Next") <~ wire(next)
