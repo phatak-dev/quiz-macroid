@@ -110,9 +110,17 @@ Contexts[Activity] {
         WRAP_CONTENT) <~ (horizontal)
         
 
+      val cheatButton = w[Button] <~ text("Cheat!") <~
+        layoutParams[LinearLayout](WRAP_CONTENT,
+        WRAP_CONTENT) <~ On.click {
+
+          Ui(true)
+        }
+
      val portraitLayout = l[LinearLayout](
       questionTextView,  
       answerView,
+      cheatButton,
       prevNextLayout             
     ) <~ (vertical) <~
        Tweak[LinearLayout] { view ⇒
@@ -124,6 +132,8 @@ Contexts[Activity] {
         CENTER_HORIZONTAL),
       answerView <~ setFrameLayoutGravity(Gravity.CENTER_VERTICAL 
         | Gravity.CENTER_HORIZONTAL),
+      cheatButton <~ setFrameLayoutGravity(Gravity.BOTTOM
+        | Gravity.CENTER ),
       prevNextLayout <~ setFrameLayoutGravity(Gravity.BOTTOM
         | Gravity.RIGHT )            
     ) <~ layoutParams[LinearLayout](MATCH_PARENT,
