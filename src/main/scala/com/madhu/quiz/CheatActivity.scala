@@ -1,7 +1,7 @@
 package com.madhu.quiz
 
 import android.os.Bundle
-import android.widget.{LinearLayout, TextView, Button,FrameLayout}
+import android.widget.{LinearLayout, TextView, Button, FrameLayout}
 import android.view.ViewGroup.LayoutParams._
 import android.view.ViewGroup
 import android.view.{Gravity, View}
@@ -21,6 +21,7 @@ import android.util.Log.d
 import android.content.Intent
 
 // import macroid stuff
+
 import macroid._
 import macroid.util.Ui
 import macroid.FullDsl._
@@ -29,52 +30,51 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
-object CheatActivity{
+object CheatActivity {
   val EXTRA_ANSWER_IS_TRUE = "com.madhu.quiz.answer_is_true"
   val EXTRA_ANSWER_SHOWN =
-  "com.madhu.quiz.answer_shown"
+    "com.madhu.quiz.answer_shown"
 }
 
-class CheatActivity extends Activity with Helper with  
+class CheatActivity extends Activity with Helper with
 Contexts[Activity] {
-   var answerTextView = slot[TextView]
-   var mAnswerIsTrue:Boolean = _ 
-   
-    def setAnswerShownResult(shown:Boolean) = {
-    	val data = new Intent()
-    	data.putExtra(CheatActivity.EXTRA_ANSWER_SHOWN,shown)
-    	setResult(Activity.RESULT_OK,data)
-    }
+  var answerTextView = slot[TextView]
+  var mAnswerIsTrue: Boolean = _
+
+  def setAnswerShownResult(shown: Boolean) = {
+    val data = new Intent()
+    data.putExtra(CheatActivity.EXTRA_ANSWER_SHOWN, shown)
+    setResult(Activity.RESULT_OK, data)
+  }
 
 
-   override def onCreate(savedInstanceState: Bundle) = {
-   	super.onCreate(savedInstanceState)
-   	setAnswerShownResult(false)
-   val view = l[LinearLayout](
-   	  w[TextView] <~ text("Are you sure you want this")
-   	  <~ layoutParams[LinearLayout](WRAP_CONTENT,WRAP_CONTENT)
-   	  <~ padding(all = 24 dp),
-   	  w[TextView] <~ wire(answerTextView)
-   	  <~ layoutParams[LinearLayout](WRAP_CONTENT,WRAP_CONTENT)
-   	  <~ padding(all = 24 dp),
-   	  w[Button] <~ text("show Answer") <~ On.click{
-   	  	setAnswerShownResult(true)
-   	  	answerTextView <~ text( if(mAnswerIsTrue) "true"
-   	  	 else "false" )
-   	  }
-   	  <~ layoutParams[LinearLayout](WRAP_CONTENT,WRAP_CONTENT)
-   	) <~ layoutParams[LinearLayout](MATCH_PARENT,MATCH_PARENT) <~ 
-      (vertical) <~
-       Tweak[LinearLayout] { view ⇒
-         view.setGravity(Gravity.CENTER)
+  override def onCreate(savedInstanceState: Bundle) = {
+    super.onCreate(savedInstanceState)
+    setAnswerShownResult(false)
+    val view = l[LinearLayout](
+      w[TextView] <~ text("Are you sure you want this")
+        <~ layoutParams[LinearLayout](WRAP_CONTENT, WRAP_CONTENT)
+        <~ padding(all = 24 dp),
+      w[TextView] <~ wire(answerTextView)
+        <~ layoutParams[LinearLayout](WRAP_CONTENT, WRAP_CONTENT)
+        <~ padding(all = 24 dp),
+      w[Button] <~ text("show Answer") <~ On.click {
+        setAnswerShownResult(true)
+        answerTextView <~ text(if (mAnswerIsTrue) "true"
+        else "false")
       }
-  
+        <~ layoutParams[LinearLayout](WRAP_CONTENT, WRAP_CONTENT)
+    ) <~ layoutParams[LinearLayout](MATCH_PARENT, MATCH_PARENT) <~
+      (vertical) <~
+      Tweak[LinearLayout] {
+        view ⇒
+          view.setGravity(Gravity.CENTER)
+      }
+
     mAnswerIsTrue = getIntent().getBooleanExtra(
-    	CheatActivity.EXTRA_ANSWER_IS_TRUE, false)
+      CheatActivity.EXTRA_ANSWER_IS_TRUE, false)
     setContentView(getUi(view))
   }
 
-  
-   
 
 }
