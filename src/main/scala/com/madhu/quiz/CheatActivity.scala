@@ -1,10 +1,10 @@
 package com.madhu.quiz
 
 import android.os.Bundle
-import android.widget.{LinearLayout, TextView, Button, FrameLayout}
+import android.widget.{ LinearLayout, TextView, Button, FrameLayout }
 import android.view.ViewGroup.LayoutParams._
 import android.view.ViewGroup
-import android.view.{Gravity, View}
+import android.view.{ Gravity, View }
 import android.app.Activity
 import android.text.method.LinkMovementMethod;
 import android.content.Context;
@@ -19,16 +19,15 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.util.Log.d
 import android.content.Intent
+import macroid.contrib.LpTweaks._
 
 // import macroid stuff
 
 import macroid._
-import macroid.util.Ui
+import macroid.Ui
 import macroid.FullDsl._
-import macroid.contrib.ExtraTweaks._
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
-
 
 object CheatActivity {
   val EXTRA_ANSWER_IS_TRUE = "com.madhu.quiz.answer_is_true"
@@ -36,8 +35,7 @@ object CheatActivity {
     "com.madhu.quiz.answer_shown"
 }
 
-class CheatActivity extends Activity with Helper with
-Contexts[Activity] {
+class CheatActivity extends Activity with Helper with Contexts[Activity] {
   var answerTextView = slot[TextView]
   var mAnswerIsTrue: Boolean = _
 
@@ -47,24 +45,22 @@ Contexts[Activity] {
     setResult(Activity.RESULT_OK, data)
   }
 
-
   override def onCreate(savedInstanceState: Bundle) = {
     super.onCreate(savedInstanceState)
     setAnswerShownResult(false)
     val view = l[LinearLayout](
       w[TextView] <~ text("Are you sure you want this")
-        <~ layoutParams[LinearLayout](WRAP_CONTENT, WRAP_CONTENT)
+        <~ wrapContent
         <~ padding(all = 24 dp),
       w[TextView] <~ wire(answerTextView)
-        <~ layoutParams[LinearLayout](WRAP_CONTENT, WRAP_CONTENT)
+        <~ wrapContent
         <~ padding(all = 24 dp),
       w[Button] <~ text("show Answer") <~ On.click {
         setAnswerShownResult(true)
         answerTextView <~ text(if (mAnswerIsTrue) "true"
         else "false")
       }
-        <~ layoutParams[LinearLayout](WRAP_CONTENT, WRAP_CONTENT)
-    ) <~ layoutParams[LinearLayout](MATCH_PARENT, MATCH_PARENT) <~
+        <~ wrapContent) <~ matchParent <~
       (vertical) <~
       Tweak[LinearLayout] {
         view ⇒
@@ -75,6 +71,5 @@ Contexts[Activity] {
       CheatActivity.EXTRA_ANSWER_IS_TRUE, false)
     setContentView(getUi(view))
   }
-
 
 }

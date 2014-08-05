@@ -24,7 +24,7 @@ resolvers ++= Seq(
 
 
 libraryDependencies ++= Seq(
-  "org.macroid" %% "macroid" % "2.0.0-M2",
+  "org.macroid" %% "macroid" % "2.0.0-M3",
   compilerPlugin("org.brianmckenna" %% "wartremover" % "0.10")
 )
 

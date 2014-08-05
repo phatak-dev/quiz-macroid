@@ -1,10 +1,10 @@
 package com.madhu.quiz
 
 import android.os.Bundle
-import android.widget.{LinearLayout, TextView, Button, FrameLayout}
+import android.widget.{ LinearLayout, TextView, Button, FrameLayout }
 import android.view.ViewGroup.LayoutParams._
 import android.view.ViewGroup
-import android.view.{Gravity, View}
+import android.view.{ Gravity, View }
 import android.app.Activity
 import android.text.method.LinkMovementMethod;
 import android.content.Context;
@@ -23,41 +23,24 @@ import android.content.Intent
 // import macroid stuff
 
 import macroid._
-import macroid.util.Ui
+import macroid.Ui
 import macroid.FullDsl._
-import macroid.contrib.ExtraTweaks._
+import macroid.contrib.LpTweaks._
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
-
 trait Helper {
   // sets text, large font size and a long click handler
-  def caption(cap: String)(implicit ctx: AppContext):
-  Ui[Boolean] = {
+  def caption(cap: String)(implicit ctx: AppContext): Ui[Boolean] = {
     (toast(cap) <~ gravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL)
       <~ fry) ~
       Ui(true)
   }
-
-  def setFrameLayoutGravity(value: Int)(implicit ctx: AppContext):
-  Tweak[View] = {
-    new Tweak((view: View) => {
-      val params = new FrameLayout.LayoutParams(
-        WRAP_CONTENT, WRAP_CONTENT)
-      params.gravity = value
-      view.setLayoutParams(params)
-    })
-  }
-
-
 }
 
+class QuizActivity extends Activity with Helper with Contexts[Activity] {
 
-class QuizActivity extends Activity with Helper with
-Contexts[Activity] {
-
-  case class TrueFalse(val question: String, mTrue:
-  Boolean)
+  case class TrueFalse(val question: String, mTrue: Boolean)
 
   val questions = Vector(TrueFalse("The pacific ocean" +
     "is larger than Atlantic ocean", true),
@@ -67,7 +50,6 @@ Contexts[Activity] {
   val tag = "QuizActivity"
   val key_index = "index"
   var mIsCheater: Boolean = _
-
 
   def checkAnswer(userAnswer: Boolean) = {
     val truthful = questions(currentIndex).mTrue
@@ -88,86 +70,72 @@ Contexts[Activity] {
       savedInstanceState.getInt(key_index)
     else currentIndex
 
-
     val actionBar = getActionBar();
     actionBar.setSubtitle("Bodies of Water")
 
-
     val prevNextLayout = l[LinearLayout](
       w[Button] <~ text("Prev")
-        <~ layoutParams[LinearLayout](WRAP_CONTENT,
-        WRAP_CONTENT) <~ On.click {
-        currentIndex = if (currentIndex > 0) currentIndex - 1
-        else
-          questions.length - 1
-        questionView <~ text(questions(currentIndex).question)
-      } <~ wire(prev),
+        <~ wrapContent <~ On.click {
+          currentIndex = if (currentIndex > 0) currentIndex - 1
+          else
+            questions.length - 1
+          questionView <~ text(questions(currentIndex).question)
+        } <~ wire(prev),
       w[Button] <~ text("Next") <~ wire(next)
-        <~ layoutParams[LinearLayout](WRAP_CONTENT,
-        WRAP_CONTENT) <~ On.click {
-        currentIndex = (currentIndex + 1) % questions.length
-        mIsCheater = false
-        questionView <~ text(questions(currentIndex).question)
-      }
-    ) <~ layoutParams[LinearLayout](WRAP_CONTENT,
-      WRAP_CONTENT) <~ (horizontal) <~ padding(all = 10 dp)
-
+        <~ wrapContent <~ On.click {
+          currentIndex = (currentIndex + 1) % questions.length
+          mIsCheater = false
+          questionView <~ text(questions(currentIndex).question)
+        }) <~ wrapContent <~ (horizontal) <~ padding(all = 10 dp)
 
     val questionTextView = w[TextView] <~ wire(questionView) <~
       text(questions(currentIndex).question) <~
-      layoutParams[LinearLayout](WRAP_CONTENT,
-        WRAP_CONTENT) <~ padding(all = 24 dp)
+      wrapContent <~ padding(all = 24 dp)
     val answerView = l[LinearLayout](
       w[Button] <~ text("true")
         <~ On.click {
-        checkAnswer(true)
-      }
-        <~ layoutParams[LinearLayout](WRAP_CONTENT,
-        WRAP_CONTENT),
+          checkAnswer(true)
+        }
+        <~ wrapContent,
       w[Button] <~ text("false")
-        <~ layoutParams[LinearLayout](WRAP_CONTENT,
-        WRAP_CONTENT) <~ On.click {
-        checkAnswer(false)
-      }
-    ) <~ layoutParams[LinearLayout](WRAP_CONTENT,
-      WRAP_CONTENT) <~ (horizontal)
-
+        <~ wrapContent <~ On.click {
+          checkAnswer(false)
+        }) <~ wrapContent <~ (horizontal)
 
     val cheatButton = w[Button] <~ text("Cheat!") <~
-      layoutParams[LinearLayout](WRAP_CONTENT,
-        WRAP_CONTENT) <~ On.click {
-      val intent =
-        new android.content.Intent(QuizActivity.this, classOf[
-          CheatActivity])
-      val answer = questions(currentIndex).mTrue
-      intent.putExtra(CheatActivity.EXTRA_ANSWER_IS_TRUE,
-        answer)
-      startActivityForResult(intent, 0)
-      Ui(true)
-    }
+      wrapContent <~ On.click {
+        val intent =
+          new android.content.Intent(QuizActivity.this, classOf[CheatActivity])
+        val answer = questions(currentIndex).mTrue
+        intent.putExtra(CheatActivity.EXTRA_ANSWER_IS_TRUE,
+          answer)
+        startActivityForResult(intent, 0)
+        Ui(true)
+      }
 
     val portraitLayout = l[LinearLayout](
       questionTextView,
       answerView,
       cheatButton,
-      prevNextLayout
-    ) <~ (vertical) <~
+      prevNextLayout) <~ (vertical) <~
       Tweak[LinearLayout] {
         view ⇒
           view.setGravity(Gravity.CENTER)
       }
 
     val landscapeLayout = l[FrameLayout](
-      questionTextView <~ setFrameLayoutGravity(Gravity.
-        CENTER_HORIZONTAL),
-      answerView <~ setFrameLayoutGravity(Gravity.CENTER_VERTICAL
-        | Gravity.CENTER_HORIZONTAL),
-      cheatButton <~ setFrameLayoutGravity(Gravity.BOTTOM
-        | Gravity.CENTER),
-      prevNextLayout <~ setFrameLayoutGravity(Gravity.BOTTOM
-        | Gravity.RIGHT)
-    ) <~ layoutParams[LinearLayout](MATCH_PARENT,
-      MATCH_PARENT)
+      questionTextView <~ lp[FrameLayout](
+        WRAP_CONTENT, WRAP_CONTENT, Gravity.
+          CENTER_HORIZONTAL),
+      answerView <~ lp[FrameLayout](
+        WRAP_CONTENT, WRAP_CONTENT, Gravity.CENTER_VERTICAL
+          | Gravity.CENTER_HORIZONTAL),
+      cheatButton <~ lp[FrameLayout](
+        WRAP_CONTENT, WRAP_CONTENT, Gravity.BOTTOM
+          | Gravity.CENTER),
+      prevNextLayout <~ lp[FrameLayout](
+        WRAP_CONTENT, WRAP_CONTENT, Gravity.BOTTOM
+          | Gravity.RIGHT)) <~ matchParent
 
     val layout = if (portrait) portraitLayout else landscapeLayout
 
@@ -192,6 +160,4 @@ Contexts[Activity] {
     })
   }
 
-
 }
- 
