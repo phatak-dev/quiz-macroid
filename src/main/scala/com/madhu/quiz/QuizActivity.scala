@@ -45,7 +45,7 @@ class QuizActivity extends Activity with Helper with Contexts[Activity] {
   val questions = Vector(TrueFalse("The pacific ocean" +
     "is larger than Atlantic ocean", true),
     TrueFalse("Nerds rule the world", true),
-    TrueFalse("In Scala None==None return true", false))
+    TrueFalse("In Scala Double.NaN == Double.NaN return true", false))
   var currentIndex = 0
   val tag = "QuizActivity"
   val key_index = "index"
