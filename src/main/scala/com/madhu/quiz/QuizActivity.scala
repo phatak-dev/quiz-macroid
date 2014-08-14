@@ -60,8 +60,7 @@ class QuizActivity extends Activity with Helper with Contexts[Activity] {
 
     //set the navigation
     def nav(direction: Int) = {
-      currentIndex = (currentIndex + direction) % questions.length
-      currentIndex = if (currentIndex < 0) questions.length - 1 else currentIndex
+      currentIndex = (currentIndex + direction + questions.length) % questions.length
       mIsCheater = false
       questionView <~ text(questions(currentIndex).question)
     }
@@ -116,7 +115,6 @@ class QuizActivity extends Activity with Helper with Contexts[Activity] {
       val answer = questions(currentIndex).mTrue
       intent.putExtra(CheatActivity.EXTRA_ANSWER_IS_TRUE, answer)
       startActivityForResult(intent, 0)
-      Ui(true)
     }
 
     val cheatButton = w[Button] <~
@@ -132,7 +130,7 @@ class QuizActivity extends Activity with Helper with Contexts[Activity] {
       answerView,
       cheatButton,
       prevNextLayout) <~
-      (vertical) <~
+      vertical <~
       Tweak[LinearLayout] {
         view => view.setGravity(Gravity.CENTER)
       }
@@ -145,7 +143,7 @@ class QuizActivity extends Activity with Helper with Contexts[Activity] {
       prevNextLayout <~ wrapContentGravity(Gravity.BOTTOM | Gravity.RIGHT)) <~
       matchParent
 
-    val layout = if (portrait) portraitLayout else landscapeLayout
+    val layout = portrait ? portraitLayout | landscapeLayout
 
     setContentView(getUi(layout))
   }
